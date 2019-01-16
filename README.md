@@ -6,8 +6,8 @@
 
 |组件|支持|
 |:-|:-|
-|OS|Ubuntu 16.04+, CentOS 7|
-|k8s|v1.8, v1.9, v1.10, v1.11, v1.12|
+|OS|Ubuntu 16.04+, CentOS/RedHat 7|
+|k8s|v1.8, v1.9, v1.10, v1.11, v1.12, v1.13|
 |etcd|v3.1, v3.2, v3.3|
 |docker|17.03.2-ce, 18.06.1-ce|
 |network|calico, cilium, flannel, kube-router|
@@ -43,20 +43,22 @@
 
 <table border="0">
     <tr>
-        <td><strong>常用插件</strong></td>
+        <td><strong>常用插件</strong><a href="docs/guide/index.md">+</a></td>
         <td><a href="docs/guide/kubedns.md">DNS</a></td>
         <td><a href="docs/guide/dashboard.md">dashboard</a></td>
         <td><a href="docs/guide/metrics-server.md">metrics-server</a></td>
         <td><a href="docs/guide/prometheus.md">prometheus</a></td>
-        <td><a href="docs/guide/index.md">更多...</a></td>
+        <td><a href="docs/guide/efk.md">efk</a></td>
+        <td><a href="docs/guide/ingress.md">ingress</a></td>
     </tr>
     <tr>
-        <td><strong>集群管理</strong></td>
+        <td><strong>集群管理</strong><a href="docs/op/op-index.md">+</a></td>
         <td><a href="docs/op/AddNode.md">增加node</a></td>
         <td><a href="docs/op/AddMaster.md">增加master</a></td>
+        <td><a href="docs/op/del_one_node.md">删除节点</a></td>
         <td><a href="docs/op/upgrade.md">升级集群</a></td>
         <td><a href="docs/op/cluster_restore.md">备份恢复</a></td>
-        <td><a href="docs/op/op-index.md">更多...</a></td>
+        <td><a href="docs/op/change_k8s_network.md">修改network插件</a></td>
     </tr>
     <tr>
         <td><strong>特性实验</strong></td>
@@ -65,19 +67,22 @@
         <td><a href="docs/guide/hpa.md">HPA</a></td>
         <td><a href=""></a></td>
         <td><a href=""></a></td>
+        <td><a href=""></a></td>
     </tr>
     <tr>
         <td><strong>周边生态</strong></td>
         <td><a href="docs/guide/harbor.md">harbor</a></td>
         <td><a href="docs/guide/helm.md">helm</a></td>
         <td><a href="docs/guide/jenkins.md">jenkins</a></td>
+        <td><a href="docs/guide/gitlab.md">gitlab</a></td>
         <td><a href=""></a></td>
         <td><a href=""></a></td>
     </tr>
     <tr>
         <td><strong>应用实践</strong></td>
         <td><a href="docs/practice/java_war_app.md">java应用部署</a></td>
-        <td><a href="docs/practice/es_cluster.md">elasticsearch部署</a></td>
+        <td><a href="docs/practice/es_cluster.md">elasticsearch集群</a></td>
+        <td><a href="docs/practice/mariadb_cluster.md">mariadb集群</a></td>
         <td><a href=""></a></td>
         <td><a href=""></a></td>
         <td><a href=""></a></td>

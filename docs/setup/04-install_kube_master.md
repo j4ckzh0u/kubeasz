@@ -26,7 +26,7 @@ roles/kube-master/
     └── token.csv.j2
 ```
 
-请在另外窗口打开[roles/kube-master/tasks/main.yml](../roles/kube-master/tasks/main.yml) 文件，对照看以下讲解内容。
+请在另外窗口打开[roles/kube-master/tasks/main.yml](../../roles/kube-master/tasks/main.yml) 文件，对照看以下讲解内容。
 
 ### 创建 kubernetes 证书签名请求
 
@@ -80,14 +80,13 @@ After=network.target
 
 [Service]
 ExecStart={{ bin_dir }}/kube-apiserver \
-  --admission-control=NamespaceLifecycle,LimitRanger,ServiceAccount,DefaultStorageClass,ResourceQuota,NodeRestriction \
+  --admission-control=NamespaceLifecycle,LimitRanger,ServiceAccount,DefaultStorageClass,ResourceQuota,NodeRestriction,MutatingAdmissionWebhook,ValidatingAdmissionWebhook \
   --bind-address={{ inventory_hostname }} \
   --insecure-bind-address=127.0.0.1 \
   --authorization-mode=Node,RBAC \
-  --runtime-config=rbac.authorization.k8s.io/v1 \
   --kubelet-https=true \
-  --kubelet-client-certificate={{ ca_dir }}/kubernetes.pem \
-  --kubelet-client-key={{ ca_dir }}/kubernetes-key.pem \
+  --kubelet-client-certificate={{ ca_dir }}/admin.pem \
+  --kubelet-client-key={{ ca_dir }}/admin-key.pem \
   --anonymous-auth=false \
   --basic-auth-file={{ ca_dir }}/basic-auth.csv \
   --service-cluster-ip-range={{ SERVICE_CIDR }} \
@@ -101,12 +100,22 @@ ExecStart={{ bin_dir }}/kube-apiserver \
   --etcd-keyfile={{ ca_dir }}/kubernetes-key.pem \
   --etcd-servers={{ ETCD_ENDPOINTS }} \
   --enable-swagger-ui=true \
+  --endpoint-reconciler-type=lease \
   --allow-privileged=true \
   --audit-log-maxage=30 \
   --audit-log-maxbackup=3 \
   --audit-log-maxsize=100 \
   --audit-log-path=/var/lib/audit.log \
   --event-ttl=1h \
+  --requestheader-client-ca-file={{ ca_dir }}/ca.pem \
+  --requestheader-allowed-names= \
+  --requestheader-extra-headers-prefix=X-Remote-Extra- \
+  --requestheader-group-headers=X-Remote-Group \
+  --requestheader-username-headers=X-Remote-User \
+  --proxy-client-cert-file={{ ca_dir }}/aggregator-proxy.pem \
+  --proxy-client-key-file={{ ca_dir }}/aggregator-proxy-key.pem \
+  --enable-aggregator-routing=true \
+  --runtime-config=batch/v2alpha1=true \
   --v=2
 Restart=on-failure
 RestartSec=5
@@ -121,7 +130,7 @@ WantedBy=multi-user.target
 + 关于authorization-mode=Node,RBAC v1.7+支持Node授权，配合NodeRestriction准入控制来限制kubelet仅可访问node、endpoint、pod、service以及secret、configmap、PV和PVC等相关的资源；需要注意的是v1.7中Node 授权是默认开启的，v1.8中需要显式配置开启，否则 Node无法正常工作
 + 缺省情况下 kubernetes 对象保存在 etcd /registry 路径下，可以通过 --etcd-prefix 参数进行调整
 + 详细参数配置请参考`kube-apiserver --help`，关于认证、授权和准入控制请[阅读](https://github.com/feiskyer/kubernetes-handbook/blob/master/components/apiserver.md)
-+ 增加了访问kubelet使用的证书配置，防止匿名访问kubelet的安全漏洞，详见[漏洞说明](mixes/01.fix_kubelet_annoymous_access.md)
++ 增加了访问kubelet使用的证书配置，防止匿名访问kubelet的安全漏洞，详见[漏洞说明](../mixes/01.fix_kubelet_annoymous_access.md)
 
 ### 创建controller-manager 的服务文件
 
@@ -142,6 +151,7 @@ ExecStart={{ bin_dir }}/kube-controller-manager \
   --cluster-signing-key-file={{ ca_dir }}/ca-key.pem \
   --service-account-private-key-file={{ ca_dir }}/ca-key.pem \
   --root-ca-file={{ ca_dir }}/ca.pem \
+  --horizontal-pod-autoscaler-use-rest-clients=true \
   --leader-elect=true \
   --v=2
 Restart=on-failure
